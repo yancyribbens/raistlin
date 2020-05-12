@@ -1,0 +1,9 @@
+[package]
+name = "raistlin"
+version = "0.1.0"
+authors = ["yancy"]
+edition = "2018"
+
+[dependencies]
+tokio = { version = "0.2.0", features = ["full"] }
+spellcheck = "0.1.2"
