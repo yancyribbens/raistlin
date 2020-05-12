@@ -6,4 +6,7 @@ edition = "2018"
 
 [dependencies]
 tokio = { version = "0.2.0", features = ["full"] }
+async-trait = "0.1.31"
 spellcheck = "0.1.2"
+git2 = "0.13"
+mockall = "0.7.1"
