@@ -57,12 +57,16 @@ fn parse_command(event_str: String) -> Option<Command> {
 
             cmd = match &cmd_header[..] {
                 ["PING"] => Some( Command::PING ( Ping { server: body } ) ),
+                
+                //:yancy!~root@ef89345d.public.cloak PRIVMSG #didnt
                 [sender, "PRIVMSG", channel] => Some(
                     Command::PRIVMSG ( Message {
                         sender: sender.to_string(),
                         channel: channel.to_string(),
                         text: body
                     })) ,
+                //public-irc.w3.org 353 raistlin = #didnt
+                [sender, byes, "raistlin = #didnt"] => { println!("hi"); None },
                 _ => None
             }
         }
