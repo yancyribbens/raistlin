@@ -67,7 +67,7 @@ fn parse_command(event_str: String) -> Option<Command> {
                     })) ,
                 //public-irc.w3.org 353 raistlin = #didnt
                 [sender, byes, "raistlin = #didnt"] => { println!("hi"); None },
-                _ => None
+                _ => { println!("does not compute"); None }
             }
         }
     }
