@@ -17,6 +17,8 @@ use std::pin::Pin;
 use std::sync::Arc;
 use std::task::{Context, Poll};
 
+use futures::executor::block_on;
+
 static NICK: &str = "raistlin";
 static CHANNEL: &str = "#didnt";
 static ADDR: &str = "irc.w3.org:6667";
@@ -128,6 +130,7 @@ impl SpellCheck {
 
 #[async_trait]
 trait Net {
+    async fn names(&mut self) -> Result<(), Box<dyn Error>>;
     async fn connect(&mut self) -> Result<(), Box<dyn Error>>;
     async fn join(&mut self) -> Result<(), Box<dyn Error>>;
     async fn listen(&mut self) -> Result<(), Box<dyn Error>>;
@@ -159,6 +162,12 @@ impl Bot <'_> {
 
 #[async_trait]
 impl Net for Irc <'_> {
+    async fn names(&mut self) -> Result<(), Box<dyn Error>> {
+        let names = format!("NAMES {}\n", CHANNEL);
+        self.stream.write_all(names.as_bytes()).await;
+        Ok(())
+    }
+
     async fn connect(&mut self) -> Result<(), Box<dyn Error>> {
         let registration_str: String = self.registration.create_registration_str();
         self.stream.write_all(&registration_str.as_bytes()).await;
@@ -205,6 +214,9 @@ impl Net for Irc <'_> {
                 let Message { sender: s, channel: c, text: t } = m;
 
                 let non_static = SCRIBE.clone();
+                let names = self.names();
+                block_on(names);
+
                 match s.split("@").nth(0) {
                     Some(non_static) => { 
                         let c = self.spell_check.correct(&t);
